@@ -2,6 +2,7 @@ package com.poo.conta.entities;
 
 import com.poo.cliente.entity.Cliente;
 import com.poo.conta.enums.TipoConta;
+import com.poo.infrastructure.exception.InvalidTransactionValueException;
 import com.poo.transacao.entity.Transacao;
 import com.poo.transacao.enums.TipoTransacao;
 
@@ -28,7 +29,7 @@ public abstract class Conta {
         transactionHistory.add(transacao);
     }
 
-    public void transfer(Conta owner, Conta recipient, Float value){
+    public void transfer(Conta owner, Conta recipient, Float value) throws InvalidTransactionValueException{
         Float ownerBalance = owner.getBalance() - value;
         Float recipientBalance = recipient.getBalance() + value;
 
@@ -39,17 +40,16 @@ public abstract class Conta {
             recipient.transactionRegister(TipoTransacao.TRANSACAO_RECEBIDA, value, LocalDateTime.now());
             System.out.println("Transfer succeed!");
         }else{
-            System.out.println("Your balance " + getBalance() + " is insufficient to make a " + value + " transaction");
+            throw new InvalidTransactionValueException("Your balance " + getBalance() + " is insufficient to make a " + value + " transaction");
         }
     }
 
-    public void deposit(Float deposit){
-        if(deposit < 0){
-            System.out.println("Invalid value");
-        } else{
-            Float balance = getBalance() + deposit;
-            setBalance(balance);
+    public void deposit(Float deposit) throws InvalidTransactionValueException {
+        if(deposit <= 0){
+            throw new InvalidTransactionValueException("Invalid deposit value: " + deposit);
         }
+        Float balance = getBalance() + deposit;
+        setBalance(balance);
         transactionRegister(TipoTransacao.DEPOSITO,deposit, LocalDateTime.now());
     }
 

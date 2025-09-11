@@ -2,6 +2,7 @@ package com.poo.banco.entity;
 
 // import com.poo.cliente.entity.Cliente;
 import com.poo.conta.entities.Conta;
+import com.poo.infrastructure.exception.NotFoundAccountException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,14 +16,17 @@ public class Banco {
     */
 
     public void addConta(Conta conta){
+        if(conta == null){
+            throw new IllegalArgumentException("Account can't be null.");
+        }
         contas.add(conta);
     }
 
-    public void searchConta(Integer accountId){
-        for (Conta conta : contas){
-            if(conta.getAccountId().equals(accountId))
-                System.out.println(conta);
-        }
+    public Conta searchConta(Integer accountId){
+        return contas.stream()
+                .filter(conta -> conta.getAccountId().equals(accountId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundAccountException("There is no one account with Id " + accountId));
     }
 
     public void listAccount(){
@@ -40,7 +44,7 @@ public class Banco {
         if(removed){
             System.out.println("Account deleted");
         }else {
-            System.out.println("There is no one account with Id " + accountId);
+            throw new NotFoundAccountException("There is no one account with Id " + accountId);
         }
     }
 }
