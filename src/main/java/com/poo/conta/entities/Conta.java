@@ -29,19 +29,13 @@ public abstract class Conta {
         transactionHistory.add(transacao);
     }
 
-    public void transfer(Conta owner, Conta recipient, Float value) throws InvalidTransactionValueException{
-        Float ownerBalance = owner.getBalance() - value;
+    public void transfer(Conta recipient, Float value) throws InvalidTransactionValueException{
+        withdraw(value);
         Float recipientBalance = recipient.getBalance() + value;
-
-        if (owner.getBalance() >= value){
-            owner.setBalance(ownerBalance);
-            recipient.setBalance(recipientBalance);
-            owner.transactionRegister(TipoTransacao.TRANSACAO_ENVIADA, value, LocalDateTime.now());
-            recipient.transactionRegister(TipoTransacao.TRANSACAO_RECEBIDA, value, LocalDateTime.now());
-            System.out.println("Transfer succeed!");
-        }else{
-            throw new InvalidTransactionValueException("Your balance " + getBalance() + " is insufficient to make a " + value + " transaction");
-        }
+        recipient.setBalance(recipientBalance);
+        transactionRegister(TipoTransacao.TRANSACAO_ENVIADA, value, LocalDateTime.now());
+        recipient.transactionRegister(TipoTransacao.TRANSACAO_RECEBIDA, value, LocalDateTime.now());
+        System.out.println("Transfer succeed!");
     }
 
     public void deposit(Float deposit) throws InvalidTransactionValueException {

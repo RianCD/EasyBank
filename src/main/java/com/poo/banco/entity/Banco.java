@@ -35,10 +35,6 @@ public class Banco {
         }
     }
 
-    public List<Conta> getAccounts(){
-        return contas;
-    }
-
     public void deleteAccount(Integer accountId){
         boolean removed = contas.removeIf(conta -> conta.getAccountId().equals(accountId));
         if(removed){
@@ -46,5 +42,12 @@ public class Banco {
         }else {
             throw new NotFoundAccountException("There is no one account with Id " + accountId);
         }
+    }
+
+    public void transfer (int ownerId, int recipientId, Float value){
+        Conta owner = searchConta(ownerId);
+        Conta recipient = searchConta(recipientId);
+
+        owner.transfer(recipient, value);
     }
 }

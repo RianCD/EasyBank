@@ -7,7 +7,8 @@ import com.poo.conta.entities.ContaCorrente;
 import com.poo.conta.entities.ContaPoupanca;
 import com.poo.conta.enums.TipoConta;
 import com.poo.endereco.entity.Endereco;
-import com.poo.infrastructure.exception.BankingException;
+import com.poo.infrastructure.exception.InvalidTransactionValueException;
+import com.poo.infrastructure.exception.NotFoundAccountException;
 
 import java.util.Scanner;
 
@@ -69,90 +70,91 @@ public class Main {
                         Conta newAccount; //nova instancia de conta
                         if (accountType.toString().equals("CORRENTE")){
                             newAccount = new ContaCorrente(client, accountId, balance, accountType);
-                        } else{
+                        } else if (accountType.toString().equals("POUPANCA")){
                             newAccount = new ContaPoupanca(client, accountId, balance, accountType);
+                        } else {
+                            throw new IllegalArgumentException("Invalid account type.");
                         }
                         bank.addConta(newAccount);
                         System.out.println("Account created successfully!");
-                    }catch (IllegalArgumentException e){
-                        System.out.println("Invalid account type");
-                    }catch (BankingException e){
+                    } catch (IllegalArgumentException e){
                         System.out.println("Error: " + e.getMessage());
                     }
-
                     break;
                 case 2:
-                    System.out.println("Enter your account's Id: ");
-                    Integer searchAccountId = sc.nextInt();
-                    bank.searchConta(searchAccountId);
+                    try{
+                        System.out.println("Enter your account's Id: ");
+                        Integer searchAccountId = sc.nextInt();
+                        Conta foundAccount = bank.searchConta(searchAccountId);
+                        System.out.println(foundAccount);
+                    } catch (NotFoundAccountException e) {
+                        System.out.println("Error: " + e.getMessage());
+                    }
                     break;
                 case 3:
                     System.out.println("Listing all accounts:\n");
                     bank.listAccount();
                     break;
                 case 4:
-                    System.out.println("Enter your account ID: ");
-                    int depositId = sc.nextInt();
-                    System.out.println("Enter your deposit amount: ");
-                    float deposit = sc.nextFloat();
-                    for (Conta conta : bank.getAccounts()){
-                        if(conta.getAccountId().equals(depositId)){
-                            conta.deposit(deposit);
-                            System.out.println("New balance: " + conta.getBalance());
-                        }
+                    try{
+                        System.out.println("Enter your account ID: ");
+                        int depositId = sc.nextInt();
+                        System.out.println("Enter your deposit amount: ");
+                        float deposit = sc.nextFloat();
+                        bank.searchConta(depositId).deposit(deposit);
+                    }catch (NotFoundAccountException | InvalidTransactionValueException e){
+                        System.out.println("Error: " + e.getMessage());
                     }
                     break;
                 case 5:
-                    System.out.println("Enter your account Id: ");
-                    int withdrawId = sc.nextInt();
-                    System.out.println("Enter your withdraw amount: ");
-                    float withdraw = sc.nextFloat();
-                    for (Conta conta : bank.getAccounts()){
-                        if(conta.getAccountId().equals(withdrawId)){
-                            conta.withdraw(withdraw);
-                            System.out.println("New balance: " + conta.getBalance());
-                        }
+                    try{
+                        System.out.println("Enter your account Id: ");
+                        int withdrawId = sc.nextInt();
+                        System.out.println("Enter your withdraw amount: ");
+                        float withdraw = sc.nextFloat();
+                        bank.searchConta(withdrawId).withdraw(withdraw);
+                    } catch (NotFoundAccountException | InvalidTransactionValueException e) {
+                        System.out.println("Error: " + e.getMessage());
                     }
                     break;
                 case 6:
-                    System.out.println("Enter your account Id: ");
-                    Integer ownerId = sc.nextInt();
-                    System.out.println("Recipient's ID: ");
-                    Integer recipientId = sc.nextInt();
-
-                    for(Conta ownerAccount : bank.getAccounts()){
-                        if(ownerAccount.getAccountId().equals(ownerId)){
-                            for (Conta recipientAccount : bank.getAccounts()){
-                                if(recipientAccount.getAccountId().equals(recipientId)){
-                                    System.out.println("Enter the transfer value: ");
-                                    Float transferValue = sc.nextFloat();
-                                    ownerAccount.transfer(ownerAccount, recipientAccount, transferValue);
-                                }
-                            }
-                        }
+                    try{
+                        System.out.println("Enter your account Id: ");
+                        int ownerId = sc.nextInt();
+                        System.out.println("Recipient's ID: ");
+                        int recipientId = sc.nextInt();
+                        System.out.println("Enter the transfer value: ");
+                        Float transferValue = sc.nextFloat();
+                        bank.transfer(ownerId,recipientId, transferValue);
+                    }catch (NotFoundAccountException | InvalidTransactionValueException e){
+                        System.out.println("Error: " + e.getMessage());
                     }
                     break;
                 case 7:
-                    System.out.println("--------------------- TRANSFER HISTORY ---------------------");
-                    System.out.println("Enter the account Id: ");
-                    Integer accountIdHistory = sc.nextInt();
-                    for (Conta conta : bank.getAccounts()){
-                        if(conta.getAccountId().equals(accountIdHistory)){
-                            conta.listTransactionHistory();
-                        }
+                    try{
+                        System.out.println("--------------------- TRANSFER HISTORY ---------------------");
+                        System.out.println("Enter the account Id: ");
+                        Integer accountIdHistory = sc.nextInt();
+                        bank.searchConta(accountIdHistory).listTransactionHistory();
+                    } catch (NotFoundAccountException e) {
+                        System.out.println("Error: " + e.getMessage());
                     }
                     break;
                 case 8:
-                    System.out.println("Enter the account's Id: ");
-                    Integer deleteId = sc.nextInt();
-                    System.out.println("Are you sure do you want to delete this account? (Y/N)");
-                    String choice = sc.next().toUpperCase();
-                    if (choice.equals("Y")){
-                        bank.deleteAccount(deleteId);
-                    }else if(choice.equals("N")) {
-                        System.out.println("Ok...");
-                    }else {
-                        System.out.println("Invalid option");
+                    try{
+                        System.out.println("Enter the account's Id: ");
+                        Integer deleteId = sc.nextInt();
+                        System.out.println("Are you sure do you want to delete this account? (Y/N)");
+                        String choice = sc.next().toUpperCase();
+                        if (choice.equals("Y")){
+                            bank.deleteAccount(deleteId);
+                        }else if(choice.equals("N")) {
+                            System.out.println("Ok...");
+                        }else {
+                            throw new IllegalArgumentException("Invalid choice.");
+                        }
+                    }catch (NotFoundAccountException e){
+                        System.out.println("Error: " + e.getMessage());
                     }
                     break;
                 default:

@@ -20,7 +20,7 @@ public class ContaPoupanca extends Conta {
             setBalance(balance);
             transactionRegister(TipoTransacao.SAQUE, withdraw, LocalDateTime.now());
         }else {
-            throw new InvalidTransactionValueException("You don't have any value to withdraw");
+            throw new InvalidTransactionValueException("You don't have sufficient value to withdraw");
         }
     }
 }
