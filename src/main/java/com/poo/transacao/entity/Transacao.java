@@ -23,28 +23,4 @@ public class Transacao {
                 ", dateAndHour=" + dateAndHour +
                 '}';
     }
-
-    public TipoTransacao getTransactionType() {
-        return transactionType;
-    }
-
-    public void setTransactionType(TipoTransacao transactionType) {
-        this.transactionType = transactionType;
-    }
-
-    public Float getValue() {
-        return value;
-    }
-
-    public void setValue(Float value) {
-        this.value = value;
-    }
-
-    public LocalDateTime getDateAndHour() {
-        return dateAndHour;
-    }
-
-    public void setDateAndHour(LocalDateTime dateAndHour) {
-        this.dateAndHour = dateAndHour;
-    }
 }

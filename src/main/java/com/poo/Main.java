@@ -18,7 +18,7 @@ public class Main {
         int option;
         Banco bank = new Banco();
 
-        System.out.println("-------------------------------------GrowthBank-------------------------------------");
+        System.out.println("-------------------------------------EasyBank-------------------------------------");
         do{
             System.out.println("1 - Create account");
             System.out.println("2 - Search account");

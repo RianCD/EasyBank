@@ -3,6 +3,7 @@ package com.poo.conta.entities;
 import com.poo.cliente.entity.Cliente;
 import com.poo.conta.enums.TipoConta;
 import com.poo.infrastructure.exception.InvalidTransactionValueException;
+import com.poo.interfaces.ITransacionavel;
 import com.poo.transacao.entity.Transacao;
 import com.poo.transacao.enums.TipoTransacao;
 
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Conta {
+public abstract class Conta implements ITransacionavel {
     private final Cliente client;
     private final List<Transacao> transactionHistory = new ArrayList<>();
     private final Integer accountId;
