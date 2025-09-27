@@ -9,6 +9,7 @@ import com.poo.conta.enums.TipoConta;
 import com.poo.endereco.entity.Endereco;
 import com.poo.infrastructure.exception.InvalidTransactionValueException;
 import com.poo.infrastructure.exception.NotFoundAccountException;
+import com.poo.infrastructure.exception.NotFoundClientException;
 
 import java.util.Objects;
 import java.util.Scanner;
@@ -22,7 +23,7 @@ public class Main {
         System.out.println("-------------------------------------EasyBank-------------------------------------");
         do{
             System.out.println("1 - Register/Create account");
-            System.out.println("2 - Search account");
+            System.out.println("2 - Access account");
             System.out.println("3 - List accounts");
             System.out.println("4 - Deposit");
             System.out.println("5 - WithDrawn");
@@ -107,24 +108,26 @@ public class Main {
                             }
                             bank.searchCliente(clientId).addConta(newAccount);
                         }
-
                     } catch (IllegalArgumentException e){
                         System.out.println("Error: " + e.getMessage());
                     }
                     break;
                 case 2:
                     try{
-                        System.out.println("Enter your account's Id: ");
-                        Integer searchAccountId = sc.nextInt();
-                        Conta foundAccount = bank.searchConta(searchAccountId);
-                        System.out.println(foundAccount);
-                    } catch (NotFoundAccountException e) {
+                        System.out.println("Enter your Id: ");
+                        Integer searchClientId = sc.nextInt();
+                        Cliente client = bank.searchCliente(searchClientId);
+                        System.out.println("Enter account Id: ");
+                        int searchAccountId = sc.nextInt();
+                        System.out.println(client.searchConta(searchAccountId).toString());
+                    } catch (NotFoundAccountException | NotFoundClientException e) {
                         System.out.println("Error: " + e.getMessage());
                     }
                     break;
                 case 3:
-                    System.out.println("Listing all accounts:\n");
-                    bank.listAccount();
+                    System.out.println("Enter your Id: ");
+                    int searchClient = sc.nextInt();
+                    bank.searchCliente(searchClient).listAccount();
                     break;
                 case 4:
                     try{
