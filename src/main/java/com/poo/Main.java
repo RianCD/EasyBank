@@ -10,6 +10,7 @@ import com.poo.endereco.entity.Endereco;
 import com.poo.infrastructure.exception.InvalidTransactionValueException;
 import com.poo.infrastructure.exception.NotFoundAccountException;
 
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
@@ -20,7 +21,7 @@ public class Main {
 
         System.out.println("-------------------------------------EasyBank-------------------------------------");
         do{
-            System.out.println("1 - Create account");
+            System.out.println("1 - Register/Create account");
             System.out.println("2 - Search account");
             System.out.println("3 - List accounts");
             System.out.println("4 - Deposit");
@@ -36,47 +37,77 @@ public class Main {
             switch (option) {
                 case 1:
                     try{
-                        System.out.println("What's the type of your account? (CORRENTE/POUPANCA)");
-                        TipoConta accountType = TipoConta.valueOf(sc.next().toUpperCase());
+                        System.out.println("You're already registered? (Y/N)");
+                        String register = sc.next().toUpperCase();
+                        if(Objects.equals(register, "N")){
+                            System.out.println("------------ Individul data ------------");
+                            System.out.println("Enter your name: ");
+                            String name = sc.next();
+                            System.out.println("Enter your cpf: ");
+                            String cpf = sc.next();
+                            System.out.println("Enter your phone number: ");
+                            String phone = sc.next();
 
-                        System.out.println("------------ Individul data ------------");
-                        System.out.println("Enter your name: ");
-                        String name = sc.next();
-                        System.out.println("Enter your cpf: ");
-                        String cpf = sc.next();
-                        System.out.println("Enter your phone number: ");
-                        String phone = sc.next();
+                            System.out.println("------------ Address data ------------");
+                            System.out.println("City: ");
+                            String city = sc.next();
+                            System.out.println("CEP: ");
+                            Integer cep = sc.nextInt();
+                            System.out.println("Street: ");
+                            String street = sc.next();
+                            System.out.println("State: ");
+                            String state = sc.next();
+                            System.out.println("House: ");
+                            Integer house = sc.nextInt();
 
-                        System.out.println("------------ Address data ------------");
-                        System.out.println("City: ");
-                        String city = sc.next();
-                        System.out.println("CEP: ");
-                        Integer cep = sc.nextInt();
-                        System.out.println("Street: ");
-                        String street = sc.next();
-                        System.out.println("State: ");
-                        String state = sc.next();
-                        System.out.println("House: ");
-                        Integer house = sc.nextInt();
+                            Endereco address = new Endereco(city, cep, street, state, house);
 
-                        Endereco address = new Endereco(city, cep, street, state, house);
-                        Cliente client = new Cliente(name, cpf, phone, address);
+                            int clientId = (int) Math.floor(Math.random() * (100));
+                            System.out.println("Your Id is: " + clientId);
+                            Cliente client = new Cliente(name, cpf, phone, address, clientId);
 
-                        Integer accountId = (int) Math.floor(Math.random() * (100));
-                        System.out.println("Your account Id is: " + accountId);
+                            System.out.println("What's the type of your account? (CORRENTE/POUPANCA)");
+                            TipoConta accountType = TipoConta.valueOf(sc.next().toUpperCase());
 
-                        Float balance = 0.0f;
+                            int accountId = (int) Math.floor(Math.random() * (100));
+                            System.out.println("Your account Id is: " + accountId);
 
-                        Conta newAccount; //nova instancia de conta
-                        if (accountType.toString().equals("CORRENTE")){
-                            newAccount = new ContaCorrente(client, accountId, balance, accountType);
-                        } else if (accountType.toString().equals("POUPANCA")){
-                            newAccount = new ContaPoupanca(client, accountId, balance, accountType);
-                        } else {
-                            throw new IllegalArgumentException("Invalid account type.");
+                            Float balance = 0.0f;
+
+                            Conta newAccount;
+                            if (accountType.toString().equals("CORRENTE")){
+                                newAccount = new ContaCorrente(client, accountId, balance, accountType);
+                            } else if (accountType.toString().equals("POUPANCA")){
+                                newAccount = new ContaPoupanca(client, accountId, balance, accountType);
+                            } else {
+                                throw new IllegalArgumentException("Invalid account type.");
+                            }
+                            bank.addCliente(client);
+                            client.addConta(newAccount);
+                            System.out.println("Account created successfully!");
+                        }else{
+                            System.out.println("Enter your ID: ");
+                            int clientId = sc.nextInt();
+
+                            System.out.println("What's the type of your new account? (CORRENTE/POUPANCA)");
+                            TipoConta accountType = TipoConta.valueOf(sc.next().toUpperCase());
+
+                            int accountId = (int) Math.floor(Math.random() * (100));
+                            System.out.println("Your account Id is: " + accountId);
+
+                            Float balance = 0.0f;
+
+                            Conta newAccount; //nova instancia de conta
+                            if (accountType.toString().equals("CORRENTE")){
+                                newAccount = new ContaCorrente(bank.searchCliente(clientId), accountId, balance, accountType);
+                            } else if (accountType.toString().equals("POUPANCA")){
+                                newAccount = new ContaPoupanca(bank.searchCliente(clientId), accountId, balance, accountType);
+                            } else {
+                                throw new IllegalArgumentException("Invalid account type.");
+                            }
+                            bank.searchCliente(clientId).addConta(newAccount);
                         }
-                        bank.addConta(newAccount);
-                        System.out.println("Account created successfully!");
+
                     } catch (IllegalArgumentException e){
                         System.out.println("Error: " + e.getMessage());
                     }
@@ -161,7 +192,7 @@ public class Main {
                     System.out.println("Not valid option");
                     break;
             }
-        }while(option != 0);
+        }while(option != 10);
         sc.close();
     }
 }
