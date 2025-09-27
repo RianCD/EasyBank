@@ -1,6 +1,7 @@
 package com.poo.banco.entity;
 
 // import com.poo.cliente.entity.Cliente;
+import com.poo.cliente.entity.Cliente;
 import com.poo.conta.entities.Conta;
 import com.poo.infrastructure.exception.NotFoundAccountException;
 
@@ -8,46 +9,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Banco {
-    private final List<Conta> contas = new ArrayList<>();
-    // private List<Cliente> clientes = new ArrayList<>();
-    /*In Java, the final keyword,
-     when applied to a field (instance variable), signifies that the field's value, once initialized,
-     cannot be reassigned.
-    */
+    private final List<Cliente> clientes = new ArrayList<>();
 
-    public void addConta(Conta conta){
-        if(conta == null){
+//    public void transfer (int ownerId, int recipientId, Float value){
+//        Conta owner = searchConta(ownerId);
+//        Conta recipient = searchConta(recipientId);
+//
+//        owner.transfer(recipient, value);
+//    }
+    public void addCliente(Cliente cliente){
+        if(cliente == null){
             throw new IllegalArgumentException("Account can't be null.");
         }
-        contas.add(conta);
+        clientes.add(cliente);
     }
 
-    public Conta searchConta(Integer accountId){
-        return contas.stream()
-                .filter(conta -> conta.getAccountId().equals(accountId))
+    public Cliente searchCliente(Integer clienteId){
+        return clientes.stream()
+                .filter(conta -> conta.getClienteId().equals(clienteId))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundAccountException("There is no one account with Id " + accountId));
+                .orElseThrow(() -> new NotFoundAccountException("There is no one account with Id " + clienteId));
     }
 
-    public void listAccount(){
-        for (Conta conta : contas) {
-            System.out.println(conta);
+    public void listCliente(){
+        for (Cliente cliente : clientes) {
+            System.out.println(cliente);
         }
     }
 
-    public void deleteAccount(Integer accountId){
-        boolean removed = contas.removeIf(conta -> conta.getAccountId().equals(accountId));
+    public void deleteAccount(Integer clienteId){
+        boolean removed = clientes.removeIf(conta -> conta.getClienteId().equals(clienteId));
         if(removed){
             System.out.println("Account deleted");
         }else {
-            throw new NotFoundAccountException("There is no one account with Id " + accountId);
+            throw new NotFoundAccountException("There is no one account with Id " + clienteId);
         }
     }
 
-    public void transfer (int ownerId, int recipientId, Float value){
-        Conta owner = searchConta(ownerId);
-        Conta recipient = searchConta(recipientId);
-
-        owner.transfer(recipient, value);
-    }
 }
