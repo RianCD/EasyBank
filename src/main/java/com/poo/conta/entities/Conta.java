@@ -16,7 +16,7 @@ public abstract class Conta implements ITransacionavel {
     private final List<Transacao> transactionHistory = new ArrayList<>();
     private final Integer accountId;
     private Float balance;
-    private TipoConta tipoConta;
+    private final TipoConta tipoConta;
 
     public Conta(Cliente client, Integer accountId, Float balance, TipoConta tipoConta){
         this.client = client;
@@ -49,6 +49,13 @@ public abstract class Conta implements ITransacionavel {
     }
 
     public abstract void withdraw(Float withdraw);
+
+//    public void transfer (int ownerId, int recipientId, Float value){
+//        Conta owner = searchConta(ownerId);
+//        Conta recipient = searchConta(recipientId);
+//
+//        owner.transfer(recipient, value);
+//    }
 
     public Float getBalance(){
         return balance;

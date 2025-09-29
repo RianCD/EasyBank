@@ -41,7 +41,7 @@ public class Main {
                         System.out.println("You're already registered? (Y/N)");
                         String register = sc.next().toUpperCase();
                         if(Objects.equals(register, "N")){
-                            System.out.println("------------ Individul data ------------");
+                            System.out.println("------------ Individual data ------------");
                             System.out.println("Enter your name: ");
                             String name = sc.next();
                             System.out.println("Enter your cpf: ");
@@ -125,41 +125,54 @@ public class Main {
                     }
                     break;
                 case 3:
-                    System.out.println("Enter your Id: ");
-                    int searchClient = sc.nextInt();
-                    bank.searchCliente(searchClient).listAccount();
+                    try{
+                        System.out.println("Enter your Id: ");
+                        int searchClient = sc.nextInt();
+                        bank.searchCliente(searchClient).listAccount();
+                    }catch (NotFoundClientException e){
+                        System.out.println("Error: " + e.getMessage());
+                    }
                     break;
                 case 4:
                     try{
+                        System.out.println("Enter your ID: ");
+                        int clientId = sc.nextInt();
                         System.out.println("Enter your account ID: ");
-                        int depositId = sc.nextInt();
+                        int accountId = sc.nextInt();
                         System.out.println("Enter your deposit amount: ");
                         float deposit = sc.nextFloat();
-                        bank.searchConta(depositId).deposit(deposit);
+                        bank.searchCliente(clientId).searchConta(accountId).deposit(deposit);
                     }catch (NotFoundAccountException | InvalidTransactionValueException e){
                         System.out.println("Error: " + e.getMessage());
                     }
                     break;
                 case 5:
                     try{
+                        System.out.println("Enter your Id: ");
+                        int clientId = sc.nextInt();
                         System.out.println("Enter your account Id: ");
-                        int withdrawId = sc.nextInt();
+                        int accountId = sc.nextInt();
                         System.out.println("Enter your withdraw amount: ");
                         float withdraw = sc.nextFloat();
-                        bank.searchConta(withdrawId).withdraw(withdraw);
+                        bank.searchCliente(clientId).searchConta(accountId).withdraw(withdraw);
                     } catch (NotFoundAccountException | InvalidTransactionValueException e) {
                         System.out.println("Error: " + e.getMessage());
                     }
                     break;
                 case 6:
                     try{
-                        System.out.println("Enter your account Id: ");
+                        System.out.println("Enter your Id: ");
                         int ownerId = sc.nextInt();
+                        System.out.println("Enter your account Id: ");
+                        int ownerAccountId = sc.nextInt();
                         System.out.println("Recipient's ID: ");
                         int recipientId = sc.nextInt();
+                        System.out.println("Recipient's account ID: ");
+                        int recipientAccountId = sc.nextInt();
                         System.out.println("Enter the transfer value: ");
                         Float transferValue = sc.nextFloat();
-                        bank.transfer(ownerId,recipientId, transferValue);
+                        bank.searchCliente(ownerId).searchConta(ownerAccountId).transfer(bank.searchCliente(recipientId).
+                                searchConta(recipientAccountId),transferValue);
                     }catch (NotFoundAccountException | InvalidTransactionValueException e){
                         System.out.println("Error: " + e.getMessage());
                     }
@@ -167,9 +180,11 @@ public class Main {
                 case 7:
                     try{
                         System.out.println("--------------------- TRANSFER HISTORY ---------------------");
+                        System.out.println("Enter your Id: ");
+                        Integer clientId = sc.nextInt();
                         System.out.println("Enter the account Id: ");
-                        Integer accountIdHistory = sc.nextInt();
-                        bank.searchConta(accountIdHistory).listTransactionHistory();
+                        Integer accountId = sc.nextInt();
+                        bank.searchCliente(clientId).searchConta(accountId).listTransactionHistory();
                     } catch (NotFoundAccountException e) {
                         System.out.println("Error: " + e.getMessage());
                     }

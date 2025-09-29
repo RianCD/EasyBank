@@ -11,12 +11,7 @@ import java.util.List;
 public class Banco {
     private final List<Cliente> clientes = new ArrayList<>();
 
-//    public void transfer (int ownerId, int recipientId, Float value){
-//        Conta owner = searchConta(ownerId);
-//        Conta recipient = searchConta(recipientId);
-//
-//        owner.transfer(recipient, value);
-//    }
+
     public void addCliente(Cliente cliente){
         if(cliente == null){
             throw new IllegalArgumentException("Account can't be null.");
